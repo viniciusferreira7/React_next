@@ -1,39 +1,57 @@
-import React, { useReducer } from 'react';
+import P from 'prop-types';
+import React, { createContext, useContext, useReducer, useRef } from 'react';
 
-const globalState = {
+export const globalState = {
   title: 'O title do contexto',
   body: 'O body do contexto',
   counter: 1,
 };
 
-const reducer = (state, action) => {
+export const actions = {
+  CHANGE_TITLE: 'CHANGE_TITLE',
+};
+
+export const Context = createContext();
+
+export const reducer = (state, action) => {
   switch (action.type) {
-    case 'Title mudou': {
-      console.log(action.payLoad);
-      return { ...state, title: 'Title mudou', counter: action.payLoad };
-    }
-    case 'inverte': {
-      const { title } = state;
-      return { ...state, title: title.split('').reverse('').join(''), counter: action.payLoad };
+    case actions.CHANGE_TITLE: {
+      return { ...state, title: action.payLoad };
     }
   }
   return { ...state };
 };
 
-function App() {
+export const AppContext = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, globalState);
-  const { title, counter } = state;
 
+  const changeTitle = (payLoad) => {
+    dispatch({ type: actions.CHANGE_TITLE, payLoad });
+  };
+
+  return <Context.Provider value={{ state, changeTitle }}>{children}</Context.Provider>;
+};
+
+AppContext.propTypes = {
+  children: P.node,
+};
+
+export const H1 = () => {
+  const context = useContext(Context);
+  const inputRef = useRef();
   return (
-    <div>
-      <h1>
-        {title}, {counter}
-      </h1>
-      <button onClick={() => dispatch({ type: 'Title mudou', payLoad: new Date().toLocaleString('pt-br') })}>
-        Click
-      </button>
-      <button onClick={() => dispatch({ type: 'inverte', payLoad: new Date().toLocaleString('pt-br') })}>Invert</button>
-    </div>
+    <>
+      <h1 onClick={() => context.changeTitle(inputRef.current.value)}>{context.state.title}</h1>
+      <input type="text" ref={inputRef} />
+    </>
+  );
+};
+
+function App() {
+  return (
+    <AppContext>
+      <H1 />
+    </AppContext>
   );
 }
 

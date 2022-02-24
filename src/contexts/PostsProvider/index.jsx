@@ -1,9 +1,11 @@
 import P from 'prop-types';
-import { useReducer } from 'react';
 
-import { PostsContext } from './context';
+import { createContext, useReducer } from 'react';
 import { reducer } from './reducer';
+
 import { data } from './data';
+
+export const PostsContext = createContext();
 
 export const PostsProvider = ({ children }) => {
   const [postsState, postsDispatch] = useReducer(reducer, data);

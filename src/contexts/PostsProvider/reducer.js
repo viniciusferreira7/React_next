@@ -10,5 +10,6 @@ export const reducer = (state, action) => {
       return { ...state, loading: true };
     }
   }
+
   return { ...state };
 };

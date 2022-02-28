@@ -1,6 +1,7 @@
 import P from 'prop-types';
 
 import { createContext, useReducer } from 'react';
+
 import { reducer } from './reducer';
 
 import { data } from './data';

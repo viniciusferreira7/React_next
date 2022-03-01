@@ -19,11 +19,31 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+const isObjectEqual = (objA, objB) => {
+  return JSON.stringify(objA) === JSON.stringify(objB);
+};
+
 export const useFetch = (url, options) => {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [shouldLoading, setShouldLoading] = useState(false);
   const urlRef = useRef(url);
   const optionsRef = useRef(options);
+
+  useEffect(() => {
+    let change = false;
+
+    if (!isObjectEqual(url, urlRef.current)) {
+      urlRef.current = url;
+      change = true;
+    }
+    if (!isObjectEqual(options, optionsRef.current)) {
+      optionsRef.current = options;
+      change = true;
+    }
+
+    if (change) setShouldLoading((s) => !s);
+  }, [url, options]);
 
   useEffect(() => {
     console.log('effect', new Date().toLocaleString());
@@ -32,7 +52,7 @@ export const useFetch = (url, options) => {
 
     const fetchData = async () => {
       await new Promise((r) => {
-        setTimeout(r, 2000);
+        setTimeout(r, 1000);
       });
       try {
         const response = await fetch(urlRef.current, optionsRef.current);
@@ -45,7 +65,7 @@ export const useFetch = (url, options) => {
       }
     };
     fetchData();
-  }, []);
+  }, [shouldLoading]);
 
   return [result, loading];
 };
@@ -73,11 +93,17 @@ export const App = () => {
   if (!loading && result) {
     return (
       <div>
-        {result.map((p) => (
-          <div key={`posts-${p.id}`} onClick={() => handleClick(p.id)}>
-            <p>{p.title}</p>
+        {result?.length > 0 ? (
+          result.map((p) => (
+            <div key={`posts-${p.id}`} onClick={() => handleClick(p.id)}>
+              <p>{p.title}</p>
+            </div>
+          ))
+        ) : (
+          <div key={`posts-${result.id}`} onClick={() => handleClick('')}>
+            <p>{result.title}</p>
           </div>
-        ))}
+        )}
       </div>
     );
   }

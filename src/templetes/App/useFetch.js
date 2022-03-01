@@ -1,23 +1,4 @@
-// import React from 'react';
-// import Posts from '../../components/Posts';
-
-// import { CounterProvider } from '../../contexts/CounterProvider';
-// import { PostsProvider } from '../../contexts/PostsProvider';
-
-// function App() {
-//   return (
-//     <CounterProvider>
-//       <PostsProvider>
-//         <h1>Posts</h1>
-//         <Posts />
-//       </PostsProvider>
-//     </CounterProvider>
-//   );
-// }
-
-// export default App;
-
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const isObjectEqual = (objA, objB) => {
   return JSON.stringify(objA) === JSON.stringify(objB);
@@ -80,45 +61,4 @@ export const useFetch = (url, options) => {
   }, [shouldLoading]);
 
   return [result, loading];
-};
-
-export const App = () => {
-  const [postsId, setPostsId] = useState('');
-  const [result, loading] = useFetch(`https://jsonplaceholder.typicode.com/posts/${postsId}`, {
-    headers: {
-      abc: '1',
-    },
-  });
-
-  useEffect(() => {
-    console.log('mudou o id do:', postsId);
-  }, [postsId]);
-
-  const handleClick = (id) => {
-    setPostsId(id);
-  };
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (!loading && result) {
-    return (
-      <div>
-        {result?.length > 0 ? (
-          result.map((p) => (
-            <div key={`posts-${p.id}`} onClick={() => handleClick(p.id)}>
-              <p>{p.title}</p>
-            </div>
-          ))
-        ) : (
-          <div key={`posts-${result.id}`} onClick={() => handleClick('')}>
-            <p>{result.title}</p>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return <h1>Oi</h1>;
 };

@@ -137,16 +137,15 @@
 //   if (state.status === 'settled') return <pre>{JSON.stringify(state.result, null, 2)}</pre>;
 // };
 
-import React, { useState } from 'react';
-import { useLayoutEffect, useRef } from 'react/cjs/react.development';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 
 export const App = () => {
-  const [counted, setCounted] = useState([1, 2, 3, 4]);
+  const [counted, setCounted] = useState([0, 1, 2, 3, 4]);
   const divRef = useRef();
 
   useLayoutEffect(() => {
-    const n = Date.now();
-    while (Date.now() < n + 2000) divRef.current.scrollTop = divRef.current.scrollHeight;
+    const now = Date.now();
+    while (Date.now() < now + 2000) divRef.current.scrollTop = divRef.current.scrollHeight;
   });
 
   const handleClick = () => {
@@ -155,8 +154,8 @@ export const App = () => {
 
   return (
     <>
-      <button onClick={() => handleClick()}>Count + {counted.slice(-1)}</button>
-      <div ref={divRef} style={{ height: '100px', width: '100px', overflowY: 'scroll' }}>
+      <button onClick={() => handleClick()}>Counter: {counted.slice(-1)}</button>
+      <div ref={divRef} style={{ width: '150px', height: '150px', overflowY: 'scroll' }}>
         {counted.map((c) => (
           <p key={`c-${c}`}>{c}</p>
         ))}

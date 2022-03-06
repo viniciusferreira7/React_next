@@ -137,29 +137,55 @@
 //   if (state.status === 'settled') return <pre>{JSON.stringify(state.result, null, 2)}</pre>;
 // };
 
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import P from 'prop-types';
+import React, { useState, useLayoutEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 export const App = () => {
   const [counted, setCounted] = useState([0, 1, 2, 3, 4]);
   const divRef = useRef();
 
-  useLayoutEffect(() => {
-    const now = Date.now();
-    while (Date.now() < now + 2000) divRef.current.scrollTop = divRef.current.scrollHeight;
-  });
-
   const handleClick = () => {
     setCounted((c) => [...c, +c.slice(-1) + 1]);
+    divRef.current.handleClick();
   };
+
+  useLayoutEffect(() => {
+    const now = Date.now();
+    while (Date.now() < now + 300) divRef.current.divRef.scrollTop = divRef.current.divRef.scrollHeight;
+  });
 
   return (
     <>
-      <button onClick={() => handleClick()}>Counter: {counted.slice(-1)}</button>
-      <div ref={divRef} style={{ width: '150px', height: '150px', overflowY: 'scroll' }}>
-        {counted.map((c) => (
-          <p key={`c-${c}`}>{c}</p>
-        ))}
-      </div>
+      <button onClick={handleClick}>Add +{counted.slice(-1)}</button>
+      <DisplayCounted counted={counted} ref={divRef} />
     </>
   );
+};
+
+export const DisplayCounted = forwardRef(function DisplayCounted({ counted }, ref) {
+  const [rand, setRand] = useState('0.24');
+  const divRef = useRef();
+
+  const handleClick = () => {
+    setRand(Math.random().toFixed(2));
+  };
+
+  useImperativeHandle(ref, () => ({
+    handleClick,
+    divRef: divRef.current,
+  }));
+
+  return (
+    <div onClick={handleClick} ref={divRef} style={{ width: '150px', height: '120px', overflowY: 'scroll' }}>
+      {counted.map((c) => (
+        <p key={`c-${c}`}>
+          {c} +++ {rand}
+        </p>
+      ))}
+    </div>
+  );
+});
+
+DisplayCounted.propTypes = {
+  counted: P.array,
 };

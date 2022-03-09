@@ -137,55 +137,92 @@
 //   if (state.status === 'settled') return <pre>{JSON.stringify(state.result, null, 2)}</pre>;
 // };
 
-import P from 'prop-types';
-import React, { useState, useLayoutEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+// import P from 'prop-types';
+// import React, { useState, useLayoutEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-export const App = () => {
-  const [counted, setCounted] = useState([0, 1, 2, 3, 4]);
-  const divRef = useRef();
+// export const App = () => {
+//   const [counted, setCounted] = useState([0, 1, 2, 3, 4]);
+//   const divRef = useRef();
 
-  const handleClick = () => {
-    setCounted((c) => [...c, +c.slice(-1) + 1]);
-    divRef.current.handleClick();
-  };
+//   const handleClick = () => {
+//     setCounted((c) => [...c, +c.slice(-1) + 1]);
+//     divRef.current.handleClick();
+//   };
 
-  useLayoutEffect(() => {
-    const now = Date.now();
-    while (Date.now() < now + 300) divRef.current.divRef.scrollTop = divRef.current.divRef.scrollHeight;
+//   useLayoutEffect(() => {
+//     const now = Date.now();
+//     while (Date.now() < now + 300) divRef.current.divRef.scrollTop = divRef.current.divRef.scrollHeight;
+//   });
+
+//   return (
+//     <>
+//       <button onClick={handleClick}>Add +{counted.slice(-1)}</button>
+//       <DisplayCounted counted={counted} ref={divRef} />
+//     </>
+//   );
+// };
+
+// export const DisplayCounted = forwardRef(function DisplayCounted({ counted }, ref) {
+//   const [rand, setRand] = useState('0.24');
+//   const divRef = useRef();
+
+//   const handleClick = () => {
+//     setRand(Math.random().toFixed(2));
+//   };
+
+//   useImperativeHandle(ref, () => ({
+//     handleClick,
+//     divRef: divRef.current,
+//   }));
+
+//   return (
+//     <div onClick={handleClick} ref={divRef} style={{ width: '150px', height: '120px', overflowY: 'scroll' }}>
+//       {counted.map((c) => (
+//         <p key={`c-${c}`}>
+//           {c} +++ {rand}
+//         </p>
+//       ))}
+//     </div>
+//   );
+// });
+
+// DisplayCounted.propTypes = {
+//   counted: P.array,
+// };
+
+import React, { useState, useEffect, useDebugValue } from 'react';
+
+export const useMediaQuery = (queryValue, initialValue = false) => {
+  const [match, setMatch] = useState(initialValue);
+
+  useDebugValue(queryValue, () => {
+    return queryValue + 'modificado';
   });
 
-  return (
-    <>
-      <button onClick={handleClick}>Add +{counted.slice(-1)}</button>
-      <DisplayCounted counted={counted} ref={divRef} />
-    </>
-  );
+  useEffect(() => {
+    let isMounted = true;
+    const matchMedia = window.matchMedia(queryValue);
+    const handleChange = () => {
+      if (!isMounted) return;
+      setMatch(!!matchMedia.matches);
+    };
+
+    matchMedia.addEventListener('change', handleChange);
+    setMatch(Boolean(matchMedia.matches));
+
+    return () => {
+      (isMounted = false), matchMedia.removeEventListener('change', handleChange);
+    };
+  }, [queryValue]);
+
+  return match;
 };
+export const App = () => {
+  const huge = useMediaQuery('(min-width:980px)');
+  const big = useMediaQuery('(max-width:979px) and (min-width: 768px)');
+  const medium = useMediaQuery('(max-width:767px) and (min-width: 321px)');
+  const small = useMediaQuery('(max-width:320px)');
 
-export const DisplayCounted = forwardRef(function DisplayCounted({ counted }, ref) {
-  const [rand, setRand] = useState('0.24');
-  const divRef = useRef();
-
-  const handleClick = () => {
-    setRand(Math.random().toFixed(2));
-  };
-
-  useImperativeHandle(ref, () => ({
-    handleClick,
-    divRef: divRef.current,
-  }));
-
-  return (
-    <div onClick={handleClick} ref={divRef} style={{ width: '150px', height: '120px', overflowY: 'scroll' }}>
-      {counted.map((c) => (
-        <p key={`c-${c}`}>
-          {c} +++ {rand}
-        </p>
-      ))}
-    </div>
-  );
-});
-
-DisplayCounted.propTypes = {
-  counted: P.array,
+  const background = huge ? 'navy' : big ? '#eb4034' : medium ? '#397536' : small ? '#6ad0d4' : false;
+  return <div style={{ fontSize: '35px', background }}>App</div>;
 };

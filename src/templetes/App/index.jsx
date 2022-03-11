@@ -190,39 +190,54 @@
 //   counted: P.array,
 // };
 
-import React, { useState, useEffect, useDebugValue } from 'react';
+import React, { useState, Component, useEffect } from 'react';
 
-export const useMediaQuery = (queryValue, initialValue = false) => {
-  const [match, setMatch] = useState(initialValue);
+export const s = {
+  style: { fontSize: '35px' },
+};
 
-  useDebugValue(queryValue, () => {
-    return queryValue + 'modificado';
-  });
+export const ItThrowError = () => {
+  const [counter, setCounter] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
-    const matchMedia = window.matchMedia(queryValue);
-    const handleChange = () => {
-      if (!isMounted) return;
-      setMatch(!!matchMedia.matches);
-    };
-
-    matchMedia.addEventListener('change', handleChange);
-    setMatch(Boolean(matchMedia.matches));
-
-    return () => {
-      (isMounted = false), matchMedia.removeEventListener('change', handleChange);
-    };
-  }, [queryValue]);
-
-  return match;
+    if (counter > 3) throw new Error('Que chato');
+  }, [counter]);
+  return <button onClick={() => setCounter((c) => c + 1)}>Click to increment +{counter}</button>;
 };
-export const App = () => {
-  const huge = useMediaQuery('(min-width:980px)');
-  const big = useMediaQuery('(max-width:979px) and (min-width: 768px)');
-  const medium = useMediaQuery('(max-width:767px) and (min-width: 321px)');
-  const small = useMediaQuery('(max-width:320px)');
 
-  const background = huge ? 'navy' : big ? '#eb4034' : medium ? '#397536' : small ? '#6ad0d4' : false;
-  return <div style={{ fontSize: '35px', background }}>App</div>;
+/*eslint-disable */
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Atualiza o state para que a próxima renderização mostre a UI alternativa.
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Você também pode registrar o erro em um serviço de relatórios de erro
+    logErrorToMyService(error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // Você pode renderizar qualquer UI alternativa
+      return <h1>Algo deu errado.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+export const App = () => {
+  return (
+    <div {...s}>
+      <ErrorBoundary>
+        <ItThrowError />
+      </ErrorBoundary>
+    </div>
+  );
 };

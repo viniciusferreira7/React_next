@@ -190,53 +190,49 @@
 //   counted: P.array,
 // };
 
-import React, { useState, Component, useEffect } from 'react';
-
-export const s = {
-  style: { fontSize: '35px' },
-};
-
-export const ItThrowError = () => {
-  const [counter, setCounter] = useState(0);
-
-  useEffect(() => {
-    if (counter > 3) throw new Error('Que chato');
-  }, [counter]);
-  return <button onClick={() => setCounter((c) => c + 1)}>Click to increment +{counter}</button>;
-};
+import React from 'react';
+import { useEffect, useState } from 'react/cjs/react.development';
 
 /*eslint-disable */
-class ErrorBoundary extends Component {
+class ErrorBoundary extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = { hasError: false };
+    super(props)
+    this.state = { hasError: false }
   }
-
   static getDerivedStateFromError(error) {
-    // Atualiza o state para que a próxima renderização mostre a UI alternativa.
-    return { hasError: true };
+    return { hasError: true }
   }
 
   componentDidCatch(error, errorInfo) {
-    // Você também pode registrar o erro em um serviço de relatórios de erro
-    logErrorToMyService(error, errorInfo);
+    console.log(error, errorInfo)
   }
 
   render() {
-    if (this.state.hasError) {
-      // Você pode renderizar qualquer UI alternativa
-      return <h1>Algo deu errado.</h1>;
-    }
+    if (this.state.hasError) return <h2>Algo deu errado</h2>
 
-    return this.props.children;
+    return this.props.children
   }
 }
 
+export const ItWillThrowError = () => {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    if (counter >= 3) throw new Error('Que chato');
+  }, [counter]);
+
+  return <button onClick={() => setCounter((c) => c + 1)}>Click increment counter + {counter}</button>;
+};
+
 export const App = () => {
+  const s = {
+    style: { fontSize: '15px' },
+  };
   return (
     <div {...s}>
+      <h1>Error boundary</h1>
       <ErrorBoundary>
-        <ItThrowError />
+        <ItWillThrowError />
       </ErrorBoundary>
     </div>
   );

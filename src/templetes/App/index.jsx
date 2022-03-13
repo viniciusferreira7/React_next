@@ -331,16 +331,96 @@
 //   );
 // };
 
+// import React from 'react';
+// import { useState } from 'react/cjs/react.development';
+// import { LazyComponent } from './LazyComponent';
+
+// export const App = () => {
+//   const [show, setShow] = useState(false);
+//   return (
+//     <>
+//       <button onClick={() => setShow((s) => !s)}>Show {show ? 'LC is screen' : 'LC is off'}</button>
+//       {show && <LazyComponent />}
+//     </>
+//   );
+// };
+
 import React from 'react';
-import { useState } from 'react/cjs/react.development';
-import { LazyComponent } from './LazyComponent';
+import { cloneElement, Children, useState, useEffect } from 'react/cjs/react.development';
+import P from 'prop-types';
+
+const s = {
+  style: {
+    fontSize: '35px',
+    color: 'navy',
+  },
+};
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  //eslint-disable-next-line
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, infoError) {
+    console.log(error, infoError);
+  }
+
+  render() {
+    if (this.state.hasError) return <h3>Algo deu errado</h3>;
+
+    return this.props.children;
+  }
+}
+
+ErrorBoundary.propTypes = {
+  children: P.node,
+};
+
+export const TurnOnOff = ({ children }) => {
+  const [isOn, setIsOn] = useState(false);
+  const [counter, setCounter] = useState(0);
+
+  const handleClick = () => {
+    setIsOn((s) => !s);
+    setCounter((c) => c + 1);
+  };
+
+  useEffect(() => {
+    if (counter >= 3) throw new Error('Algo deu errado');
+  }, [counter]);
+
+  return Children.map(children, (child) => {
+    const newChild = cloneElement(child, { isOn, handleClick, ...s });
+    return newChild;
+  });
+};
+
+export const TurnedOn = ({ isOn, children }) => (isOn ? children : null);
+export const TurnedOff = ({ isOn, children }) => (isOn ? null : children);
+
+export const TurnButton = ({ isOn, handleClick }) => {
+  return <button onClick={handleClick}>Click {isOn ? 'OFF' : 'ON'}</button>;
+};
+
+TurnButton.propTypes = {
+  isOn: P.bool,
+  handleClick: P.func,
+};
 
 export const App = () => {
-  const [show, setShow] = useState(false);
   return (
-    <>
-      <button onClick={() => setShow((s) => !s)}>Show {show ? 'LC is screen' : 'LC is off'}</button>
-      {show && <LazyComponent />}
-    </>
+    <ErrorBoundary>
+      <TurnOnOff>
+        <TurnedOn>Está ligado</TurnedOn>
+        <TurnedOff>Está desligado</TurnedOff>
+        <TurnButton />
+      </TurnOnOff>
+    </ErrorBoundary>
   );
 };

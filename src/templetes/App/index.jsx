@@ -345,82 +345,127 @@
 //   );
 // };
 
+// import React from 'react';
+// import { cloneElement, Children, useState, useEffect } from 'react/cjs/react.development';
+// import P from 'prop-types';
+
+// const s = {
+//   style: {
+//     fontSize: '35px',
+//     color: 'navy',
+//   },
+// };
+
+// class ErrorBoundary extends React.Component {
+//   constructor(props) {
+//     super(props);
+//     this.state = { hasError: false };
+//   }
+
+//   //eslint-disable-next-line
+//   static getDerivedStateFromError(error) {
+//     return { hasError: true };
+//   }
+
+//   componentDidCatch(error, infoError) {
+//     console.log(error, infoError);
+//   }
+
+//   render() {
+//     if (this.state.hasError) return <h3>Algo deu errado</h3>;
+
+//     return this.props.children;
+//   }
+// }
+
+// ErrorBoundary.propTypes = {
+//   children: P.node,
+// };
+
+// export const TurnOnOff = ({ children }) => {
+//   const [isOn, setIsOn] = useState(false);
+//   const [counter, setCounter] = useState(0);
+
+//   const handleClick = () => {
+//     setIsOn((s) => !s);
+//     setCounter((c) => c + 1);
+//   };
+
+//   useEffect(() => {
+//     if (counter >= 3) throw new Error('Algo deu errado');
+//   }, [counter]);
+
+//   return Children.map(children, (child) => {
+//     const newChild = cloneElement(child, { isOn, handleClick, ...s });
+//     return newChild;
+//   });
+// };
+
+// export const TurnedOn = ({ isOn, children }) => (isOn ? children : null);
+// export const TurnedOff = ({ isOn, children }) => (isOn ? null : children);
+
+// export const TurnButton = ({ isOn, handleClick }) => {
+//   return <button onClick={handleClick}>Click {isOn ? 'OFF' : 'ON'}</button>;
+// };
+
+// TurnButton.propTypes = {
+//   isOn: P.bool,
+//   handleClick: P.func,
+// };
+
+// export const App = () => {
+//   return (
+//     <ErrorBoundary>
+//       <TurnOnOff>
+//         <TurnedOn>Está ligado</TurnedOn>
+//         <TurnedOff>Está desligado</TurnedOff>
+//         <TurnButton />
+//       </TurnOnOff>
+//     </ErrorBoundary>
+//   );
+// };
+
+// import React from 'react';
+// import { Suspense, useState } from 'react/cjs/react.development';
+// // import LazyComponent from './LazyComponent';
+
+// const LazyComponentImport = () => {
+//   console.log('Carregando componente...');
+//   return import('./LazyComponent');
+// };
+// const LazyComponent = React.lazy(LazyComponentImport);
+
+// export const App = () => {
+//   const [show, setShow] = useState(false);
+
+//   return (
+//     <div>
+//       <button onMouseOver={LazyComponentImport} onClick={() => setShow((s) => !s)}>
+//         Show
+//       </button>
+//       <Suspense fallback={<p>Carregando componente</p>}>{show && <LazyComponent />}</Suspense>
+//     </div>
+//   );
+// };
+
 import React from 'react';
-import { cloneElement, Children, useState, useEffect } from 'react/cjs/react.development';
-import P from 'prop-types';
-
-const s = {
-  style: {
-    fontSize: '35px',
-    color: 'navy',
-  },
-};
-
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  //eslint-disable-next-line
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, infoError) {
-    console.log(error, infoError);
-  }
-
-  render() {
-    if (this.state.hasError) return <h3>Algo deu errado</h3>;
-
-    return this.props.children;
-  }
-}
-
-ErrorBoundary.propTypes = {
-  children: P.node,
-};
-
-export const TurnOnOff = ({ children }) => {
-  const [isOn, setIsOn] = useState(false);
-  const [counter, setCounter] = useState(0);
-
-  const handleClick = () => {
-    setIsOn((s) => !s);
-    setCounter((c) => c + 1);
-  };
-
-  useEffect(() => {
-    if (counter >= 3) throw new Error('Algo deu errado');
-  }, [counter]);
-
-  return Children.map(children, (child) => {
-    const newChild = cloneElement(child, { isOn, handleClick, ...s });
-    return newChild;
-  });
-};
-
-export const TurnedOn = ({ isOn, children }) => (isOn ? children : null);
-export const TurnedOff = ({ isOn, children }) => (isOn ? null : children);
-
-export const TurnButton = ({ isOn, handleClick }) => {
-  return <button onClick={handleClick}>Click {isOn ? 'OFF' : 'ON'}</button>;
-};
-
-TurnButton.propTypes = {
-  isOn: P.bool,
-  handleClick: P.func,
-};
+import { Suspense, useState } from 'react/cjs/react.development';
 
 export const App = () => {
+  const [show, setShow] = useState(false);
+
+  const loadComponent = () => {
+    console.log('Carregando...');
+    return import('./LazyComponent');
+  };
+  const LazyComponent = React.lazy(loadComponent);
+
   return (
-    <ErrorBoundary>
-      <TurnOnOff>
-        <TurnedOn>Está ligado</TurnedOn>
-        <TurnedOff>Está desligado</TurnedOff>
-        <TurnButton />
-      </TurnOnOff>
-    </ErrorBoundary>
+    <div>
+      <button onMouseOver={loadComponent} onClick={() => setShow((s) => !s)}>
+        Show {show && 'LC is Screen'}
+      </button>
+      <Suspense fallback={<h2>Carregando componente...</h2>}>{show && <LazyComponent />}</Suspense>
+    </div>
   );
 };

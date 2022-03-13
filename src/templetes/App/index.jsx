@@ -278,55 +278,69 @@
 //   );
 // };
 
+// import React from 'react';
+// import { useState, createContext, useContext } from 'react/cjs/react.development';
+// import P from 'prop-types';
+
+// const s = {
+//   styles: {
+//     fontSize: '35px',
+//     color: 'navy',
+//     textDecoration: 'underline',
+//   },
+// };
+
+// export const TurnContext = createContext();
+
+// export const TurnOnOff = ({ children }) => {
+//   const [isOn, setIsOn] = useState(false);
+//   const onTurn = () => setIsOn((s) => !s);
+
+//   return <TurnContext.Provider value={{ isOn, onTurn }}>{children}</TurnContext.Provider>;
+// };
+
+// TurnOnOff.propTypes = {
+//   children: P.node,
+// };
+
+// export const TurnedOn = ({ children }) => {
+//   const { isOn } = useContext(TurnContext);
+//   return isOn ? children : null;
+// };
+// export const TurnedOff = ({ children }) => {
+//   const { isOn } = useContext(TurnContext);
+//   return isOn ? null : children;
+// };
+// export const TurnButton = ({ ...props }) => {
+//   const { isOn, onTurn } = useContext(TurnContext);
+//   return (
+//     <button {...props} onClick={onTurn}>
+//       TURN {isOn ? 'OFF' : 'ON'}
+//     </button>
+//   );
+// };
+
+// export const App = () => {
+//   return (
+//     <TurnOnOff>
+//       <p>ola</p>
+//       <TurnedOn>O pai da ON.</TurnedOn>
+//       <TurnedOff>O pai da OFF.</TurnedOff>
+//       <TurnButton {...s} />
+//     </TurnOnOff>
+//   );
+// };
+
 import React from 'react';
-import { useState, createContext, useContext } from 'react/cjs/react.development';
-import P from 'prop-types';
-
-const s = {
-  styles: {
-    fontSize: '35px',
-    color: 'navy',
-    textDecoration: 'underline',
-  },
-};
-
-export const TurnContext = createContext();
-
-export const TurnOnOff = ({ children }) => {
-  const [isOn, setIsOn] = useState(false);
-  const onTurn = () => setIsOn((s) => !s);
-
-  return <TurnContext.Provider value={{ isOn, onTurn }}>{children}</TurnContext.Provider>;
-};
-
-TurnOnOff.propTypes = {
-  children: P.node,
-};
-
-export const TurnedOn = ({ children }) => {
-  const { isOn } = useContext(TurnContext);
-  return isOn ? children : null;
-};
-export const TurnedOff = ({ children }) => {
-  const { isOn } = useContext(TurnContext);
-  return isOn ? null : children;
-};
-export const TurnButton = ({ ...props }) => {
-  const { isOn, onTurn } = useContext(TurnContext);
-  return (
-    <button {...props} onClick={onTurn}>
-      TURN {isOn ? 'OFF' : 'ON'}
-    </button>
-  );
-};
+import { useState } from 'react/cjs/react.development';
+import { LazyComponent } from './LazyComponent';
 
 export const App = () => {
+  const [show, setShow] = useState(false);
   return (
-    <TurnOnOff>
-      <p>ola</p>
-      <TurnedOn>O pai da ON.</TurnedOn>
-      <TurnedOff>O pai da OFF.</TurnedOff>
-      <TurnButton {...s} />
-    </TurnOnOff>
+    <>
+      <button onClick={() => setShow((s) => !s)}>Show {show ? 'LC is screen' : 'LC is off'}</button>
+      {show && <LazyComponent />}
+    </>
   );
 };

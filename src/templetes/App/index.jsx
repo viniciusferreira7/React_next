@@ -1,6 +1,8 @@
 // // // import React from 'react';
 // // // import Posts from '../../components/Posts';
 
+// import { Children, cloneElement, useState } from 'react/cjs/react.development';
+
 // // // import { CounterProvider } from '../../contexts/CounterProvider';
 // // // import { PostsProvider } from '../../contexts/PostsProvider';
 
@@ -190,50 +192,141 @@
 //   counted: P.array,
 // };
 
+// import React from 'react';
+// import { useEffect, useState } from 'react/cjs/react.development';
+
+// /*eslint-disable */
+// class ErrorBoundary extends React.Component {
+//   constructor(props) {
+//     super(props)
+//     this.state = { hasError: false }
+//   }
+//   static getDerivedStateFromError(error) {
+//     return { hasError: true }
+//   }
+
+//   componentDidCatch(error, errorInfo) {
+//     console.log(error, errorInfo)
+//   }
+
+//   render() {
+//     if (this.state.hasError) return <h2>Algo deu errado</h2>
+
+//     return this.props.children
+//   }
+// }
+
+// export const ItWillThrowError = () => {
+//   const [counter, setCounter] = useState(0);
+
+//   useEffect(() => {
+//     if (counter >= 3) throw new Error('Que chato');
+//   }, [counter]);
+
+//   return <button onClick={() => setCounter((c) => c + 1)}>Click increment counter + {counter}</button>;
+// };
+
+// export const App = () => {
+//   const s = {
+//     style: { fontSize: '15px' },
+//   };
+//   return (
+//     <div {...s}>
+//       <h1>Error boundary</h1>
+//       <ErrorBoundary>
+//         <ItWillThrowError />
+//       </ErrorBoundary>
+//     </div>
+//   );
+// };
+
+// import React, { cloneElement, Children, useState } from 'react';
+
+// export const s = {
+//   style: {
+//     fontSize: '24px',
+//     color: 'navy',
+//   },
+// };
+
+// export const TurnOnOff = ({ children }) => {
+//   const [isOn, setIsOn] = useState(false);
+
+//   const onTurn = () => setIsOn((s) => !s);
+
+//   return Children.map(children, (child) => {
+//     const newChild = cloneElement(child, { isOn, onTurn });
+//     return newChild;
+//   });
+// };
+
+// export const TurnedOn = ({ isOn, children }) => (isOn ? children : null);
+// export const TurnedOff = ({ isOn, children }) => (isOn ? null : children);
+
+// /*eslint-disable-next-line */
+// export const TurnButton = ({ isOn, onTurn }) => {
+//   return <button onClick={onTurn}>{isOn ? 'OFF' : 'ON'}</button>;
+// };
+
+// export const App = () => {
+//   return (
+//     <TurnOnOff>
+//       <TurnedOn>Aqui que as coisas vão acontecer quando estiver ON.</TurnedOn>
+//       <TurnedOff>Aqui que vem as coisas do OFF.</TurnedOff>
+//       <TurnButton />
+//     </TurnOnOff>
+//   );
+// };
+
 import React from 'react';
-import { useEffect, useState } from 'react/cjs/react.development';
+import { useState, createContext, useContext } from 'react/cjs/react.development';
+import P from 'prop-types';
 
-/*eslint-disable */
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { hasError: false }
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true }
-  }
+const s = {
+  styles: {
+    fontSize: '35px',
+    color: 'navy',
+    textDecoration: 'underline',
+  },
+};
 
-  componentDidCatch(error, errorInfo) {
-    console.log(error, errorInfo)
-  }
+export const TurnContext = createContext();
 
-  render() {
-    if (this.state.hasError) return <h2>Algo deu errado</h2>
+export const TurnOnOff = ({ children }) => {
+  const [isOn, setIsOn] = useState(false);
+  const onTurn = () => setIsOn((s) => !s);
 
-    return this.props.children
-  }
-}
+  return <TurnContext.Provider value={{ isOn, onTurn }}>{children}</TurnContext.Provider>;
+};
 
-export const ItWillThrowError = () => {
-  const [counter, setCounter] = useState(0);
+TurnOnOff.propTypes = {
+  children: P.node,
+};
 
-  useEffect(() => {
-    if (counter >= 3) throw new Error('Que chato');
-  }, [counter]);
-
-  return <button onClick={() => setCounter((c) => c + 1)}>Click increment counter + {counter}</button>;
+export const TurnedOn = ({ children }) => {
+  const { isOn } = useContext(TurnContext);
+  return isOn ? children : null;
+};
+export const TurnedOff = ({ children }) => {
+  const { isOn } = useContext(TurnContext);
+  return isOn ? null : children;
+};
+export const TurnButton = ({ ...props }) => {
+  const { isOn, onTurn } = useContext(TurnContext);
+  return (
+    <button {...props} onClick={onTurn}>
+      TURN {isOn ? 'OFF' : 'ON'}
+    </button>
+  );
 };
 
 export const App = () => {
-  const s = {
-    style: { fontSize: '15px' },
-  };
   return (
-    <div {...s}>
-      <h1>Error boundary</h1>
-      <ErrorBoundary>
-        <ItWillThrowError />
-      </ErrorBoundary>
-    </div>
+    <TurnOnOff>
+      <p>ola</p>
+      <TurnedOn>O pai da ON.</TurnedOn>
+      <TurnedOff>O pai da OFF.</TurnedOff>
+      <TurnButton {...s} />
+    </TurnOnOff>
   );
 };

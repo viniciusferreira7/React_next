@@ -448,24 +448,46 @@
 //   );
 // };
 
-import React from 'react';
-import { Suspense, useState } from 'react/cjs/react.development';
+// import React from 'react';
+// import { Suspense, useState } from 'react/cjs/react.development';
+
+// export const App = () => {
+//   const [show, setShow] = useState(false);
+
+//   const loadComponent = () => {
+//     console.log('Carregando...');
+//     return import('./LazyComponent');
+//   };
+//   const LazyComponent = React.lazy(loadComponent);
+
+//   return (
+//     <div>
+//       <button onMouseOver={loadComponent} onClick={() => setShow((s) => !s)}>
+//         Show {show && 'LC is Screen'}
+//       </button>
+//       <Suspense fallback={<h2>Carregando componente...</h2>}>{show && <LazyComponent />}</Suspense>
+//     </div>
+//   );
+// };
+
+import React, { useState } from 'react';
+import { Suspense } from 'react/cjs/react.development';
+
+const loadComponent = () => {
+  console.log('Carregando...');
+  return import('./LazyComponent');
+};
+
+const LazyComponent = React.lazy(loadComponent);
 
 export const App = () => {
+  /*eslint-disable*/
   const [show, setShow] = useState(false);
-
-  const loadComponent = () => {
-    console.log('Carregando...');
-    return import('./LazyComponent');
-  };
-  const LazyComponent = React.lazy(loadComponent);
 
   return (
     <div>
-      <button onMouseOver={loadComponent} onClick={() => setShow((s) => !s)}>
-        Show {show && 'LC is Screen'}
-      </button>
-      <Suspense fallback={<h2>Carregando componente...</h2>}>{show && <LazyComponent />}</Suspense>
+      <button onMouseOver={loadComponent} onClick={() => setShow(s => !s)}>Show {show && 'LC is screen'}</button>
+      <Suspense fallback={<h3>Carregando...</h3>}>{show && <LazyComponent />}</Suspense>
     </div>
   );
 };

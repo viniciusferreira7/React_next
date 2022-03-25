@@ -1,23 +1,21 @@
-// // // import React from 'react';
-// // // import Posts from '../../components/Posts';
+import React from 'react';
+import Posts from '../../components/Posts';
 
-// import { Children, cloneElement, useState } from 'react/cjs/react.development';
+import { CounterProvider } from '../../contexts/CounterProvider';
+import { PostsProvider } from '../../contexts/PostsProvider';
 
-// // // import { CounterProvider } from '../../contexts/CounterProvider';
-// // // import { PostsProvider } from '../../contexts/PostsProvider';
+function App() {
+  return (
+    <CounterProvider>
+      <PostsProvider>
+        <h1>Posts</h1>
+        <Posts />
+      </PostsProvider>
+    </CounterProvider>
+  );
+}
 
-// // // function App() {
-// // //   return (
-// // //     <CounterProvider>
-// // //       <PostsProvider>
-// // //         <h1>Posts</h1>
-// // //         <Posts />
-// // //       </PostsProvider>
-// // //     </CounterProvider>
-// // //   );
-// // // }
-
-// // // export default App;
+export default App;
 
 // // import React, { useEffect, useRef, useState } from 'react';
 
@@ -470,24 +468,24 @@
 //   );
 // };
 
-import React, { useState } from 'react';
-import { Suspense } from 'react/cjs/react.development';
+// import React, { useState } from 'react';
+// import { Suspense } from 'react/cjs/react.development';
 
-const loadComponent = () => {
-  console.log('Carregando...');
-  return import('./LazyComponent');
-};
+// const loadComponent = () => {
+//   console.log('Carregando...');
+//   return import('./LazyComponent');
+// };
 
-const LazyComponent = React.lazy(loadComponent);
+// const LazyComponent = React.lazy(loadComponent);
 
-export const App = () => {
-  /*eslint-disable*/
-  const [show, setShow] = useState(false);
+// export const App = () => {
+//   /*eslint-disable*/
+//   const [show, setShow] = useState(false);
 
-  return (
-    <div>
-      <button onMouseOver={loadComponent} onClick={() => setShow(s => !s)}>Show {show && 'LC is screen'}</button>
-      <Suspense fallback={<h3>Carregando...</h3>}>{show && <LazyComponent />}</Suspense>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <button onMouseOver={loadComponent} onClick={() => setShow(s => !s)}>Show {show && 'LC is screen'}</button>
+//       <Suspense fallback={<h3>Carregando...</h3>}>{show && <LazyComponent />}</Suspense>
+//     </div>
+//   );
+// };

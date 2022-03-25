@@ -12,7 +12,7 @@ ReactDOM.render(
       <Menu />
       <Switch>
         <Route path="/" component={App} exact></Route>
-        <Route path="/Abc" component={Abc} exact></Route>
+        <Route path="/Abc/:slug?" component={Abc}></Route>
       </Switch>
     </BrowserRouter>
   </React.StrictMode>,

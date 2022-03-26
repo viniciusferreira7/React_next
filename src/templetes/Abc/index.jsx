@@ -1,18 +1,17 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react/cjs/react.development';
 
 export const Abc = () => {
   const { slug } = useParams();
   const history = useHistory();
   console.log(history);
 
-  useEffect(() => {
-    setTimeout(() => {
-      history.push('/');
-    }, 3000);
-  }, [history]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     history.push('/');
+  //   }, 3000);
+  // }, [history]);
 
   return (
     <div>
